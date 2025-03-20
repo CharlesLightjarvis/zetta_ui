@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { CheckCircle, Award, Users, Building, MapPin } from "lucide-react";
 import { Footer } from "~/components/footer";
 import { MainNav } from "~/components/main-nav";
+import team from "~/assets/team.png";
+import user from "~/assets/user.png";
+import locaux from "~/assets/locaux.png";
 
 export default function AboutPage() {
   return (
@@ -64,7 +67,7 @@ export default function AboutPage() {
               className="relative h-[400px] rounded-lg overflow-hidden"
             >
               <img
-                src="/placeholder.svg?height=800&width=600"
+                src={team}
                 alt="Notre équipe en formation"
                 className="object-cover"
               />
@@ -166,11 +169,7 @@ export default function AboutPage() {
               className="text-center"
             >
               <div className="relative h-[200px] w-[200px] mx-auto mb-4 rounded-full overflow-hidden">
-                <img
-                  src="/placeholder.svg?height=400&width=400"
-                  alt="Thomas Dubois"
-                  className="object-cover"
-                />
+                <img src={user} alt="Thomas Dubois" className="object-cover" />
               </div>
               <h3 className="text-xl font-bold">Thomas Dubois</h3>
               <p className="text-primary font-medium">Expert DevOps & Cloud</p>
@@ -186,11 +185,7 @@ export default function AboutPage() {
               className="text-center"
             >
               <div className="relative h-[200px] w-[200px] mx-auto mb-4 rounded-full overflow-hidden">
-                <img
-                  src="/placeholder.svg?height=400&width=400"
-                  alt="Sophie Martin"
-                  className="object-cover"
-                />
+                <img src={user} alt="Sophie Martin" className="object-cover" />
               </div>
               <h3 className="text-xl font-bold">Sophie Martin</h3>
               <p className="text-primary font-medium">
@@ -208,11 +203,7 @@ export default function AboutPage() {
               className="text-center"
             >
               <div className="relative h-[200px] w-[200px] mx-auto mb-4 rounded-full overflow-hidden">
-                <img
-                  src="/placeholder.svg?height=400&width=400"
-                  alt="Julie Leroy"
-                  className="object-cover"
-                />
+                <img src={user} alt="Julie Leroy" className="object-cover" />
               </div>
               <h3 className="text-xl font-bold">Julie Leroy</h3>
               <p className="text-primary font-medium">
@@ -231,7 +222,7 @@ export default function AboutPage() {
             >
               <div className="relative h-[200px] w-[200px] mx-auto mb-4 rounded-full overflow-hidden">
                 <img
-                  src="/placeholder.svg?height=400&width=400"
+                  src={user}
                   alt="Alexandre Petit"
                   className="object-cover"
                 />
@@ -318,11 +309,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
               className="relative h-[400px] rounded-lg overflow-hidden"
             >
-              <img
-                src="/placeholder.svg?height=800&width=600"
-                alt="Nos locaux"
-                className="object-cover"
-              />
+              <img src={locaux} alt="Nos locaux" className="object-cover" />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 20 }}

@@ -26,6 +26,7 @@ import {
 } from "~/components/ui/select";
 import { Textarea } from "~/components/ui/textarea";
 import { Footer } from "~/components/footer";
+import localisation from "~/assets/localisation.png";
 
 export default function ContactPage() {
   const [interestFormData, setInterestFormData] = useState({
@@ -164,10 +165,14 @@ export default function ContactPage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <div className="h-[300px] w-full overflow-hidden rounded-md bg-muted">
+                  <div className="h-[400px] w-full overflow-hidden rounded-md bg-muted">
                     {/* Ici, vous pourriez intégrer une carte Google Maps */}
                     <div className="flex h-full items-center justify-center">
-                      <p className="text-muted-foreground">Carte Google Maps</p>
+                      <img
+                        src={localisation}
+                        alt="Nos locaux"
+                        className="object-contain"
+                      />
                     </div>
                   </div>
                 </CardFooter>

@@ -227,7 +227,9 @@ export default function FormationsPage() {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Users className="mr-1 h-4 w-4" />
-                          <span>{formation.capacity} étudiants</span>
+                          <span>
+                            {formation.enrolled_students} étudiants inscrits
+                          </span>
                         </div>
                         <div className="font-bold text-primary">
                           {formation.price} DT

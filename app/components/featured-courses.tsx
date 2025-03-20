@@ -14,6 +14,9 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Badge } from "./ui/badge";
+import useFormationStore from "~/store/use-formation-store";
+import { useEffect } from "react";
+import { LoadingScreen } from "./loading-screen";
 
 const featuredCourses = [
   {
@@ -73,6 +76,22 @@ const featuredCourses = [
 ];
 
 export function FeaturedCourses() {
+  const { formations, fetchFormations, loading, error, removeFormation } =
+    useFormationStore();
+
+  useEffect(() => {
+    fetchFormations();
+  }, [fetchFormations]);
+
+  if (loading)
+    return (
+      <div>
+        <LoadingScreen />
+      </div>
+    );
+
+  if (error) return <div>Erreur : {error}</div>;
+
   return (
     <section className="container py-12 md:py-16 lg:py-20">
       <motion.div
@@ -91,7 +110,7 @@ export function FeaturedCourses() {
       </motion.div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {featuredCourses.map((course, index) => (
+        {formations.map((course, index) => (
           <motion.div
             key={course.id}
             initial={{ opacity: 0, y: 20 }}
@@ -103,7 +122,7 @@ export function FeaturedCourses() {
               <div className="aspect-video w-full overflow-hidden">
                 <img
                   src={course.image || "/placeholder.svg"}
-                  alt={course.title}
+                  alt={course.name}
                   width={600}
                   height={400}
                   className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
@@ -114,27 +133,29 @@ export function FeaturedCourses() {
                   <Badge>{course.level}</Badge>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Clock className="mr-1 h-4 w-4" />
-                    {course.duration}
+                    {course.duration} semaines
                   </div>
                 </div>
-                <CardTitle className="mt-2">{course.title}</CardTitle>
+                <CardTitle className="mt-2">{course.name}</CardTitle>
                 <CardDescription>{course.description}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Users className="mr-1 h-4 w-4" />
-                    <span>{course.students} étudiants inscrits</span>
+                    <span>{course.enrolled_students} étudiants inscrits</span>
                   </div>
-                  <div className="font-bold text-primary">{course.price}</div>
+                  <div className="font-bold text-primary">
+                    {course.price} DT
+                  </div>
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground mb-2">
                   <User className="mr-1 h-4 w-4" />
-                  <span>Formateur: {course.instructor}</span>
+                  <span>Formateur: {course.teacher.fullName}</span>
                 </div>
                 <div className="text-sm text-muted-foreground mb-4">
                   <span className="font-medium">Type: </span>
-                  <span>{course.courseType}</span>
+                  <span>{course.course_type}</span>
                 </div>
                 <div className="mt-4">
                   <h4 className="text-sm font-medium">Certifications :</h4>
@@ -142,7 +163,7 @@ export function FeaturedCourses() {
                     {course.certifications.map((cert, i) => (
                       <li key={i} className="flex items-start">
                         <Award className="mr-2 h-4 w-4 text-primary" />
-                        <span className="text-sm">{cert}</span>
+                        <span className="text-sm">{cert.name}</span>
                       </li>
                     ))}
                   </ul>

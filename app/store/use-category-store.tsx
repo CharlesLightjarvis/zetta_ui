@@ -20,7 +20,7 @@ const useCategoryStore = create<CategoryStore>((set) => ({
     set({ loading: true, error: null, categories: [] });
     try {
       const response = await api.get<{ categories: Category[] }>(
-        "/admin/categories"
+        "/guest/categories"
       );
       // Access the categories array from response.data.categories
       const categories = response.data.categories;

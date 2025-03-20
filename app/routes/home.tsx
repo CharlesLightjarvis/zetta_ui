@@ -108,14 +108,14 @@ export default function HomePage() {
                         et performantes avec React et TypeScript.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/react-typescript">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                   <Card>
                     <CardHeader>
@@ -130,14 +130,14 @@ export default function HomePage() {
                         et le framework Express.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/nodejs-express">
                           En savoir plus
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                   <Card>
                     <CardHeader>
@@ -152,14 +152,14 @@ export default function HomePage() {
                         JavaScript côté client et serveur.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/fullstack-javascript">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                 </div>
               </TabsContent>
@@ -178,14 +178,14 @@ export default function HomePage() {
                         conteneurisées à grande échelle.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/docker-kubernetes">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                   <Card>
                     <CardHeader>
@@ -200,14 +200,14 @@ export default function HomePage() {
                         déploiement continus.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/cicd-pipeline">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                   <Card>
                     <CardHeader>
@@ -220,14 +220,14 @@ export default function HomePage() {
                         d'efficacité et de fiabilité.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/infrastructure-as-code">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                 </div>
               </TabsContent>
@@ -244,14 +244,14 @@ export default function HomePage() {
                         utilisateur pour garantir la qualité.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/test-automation">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                   <Card>
                     <CardHeader>
@@ -264,14 +264,14 @@ export default function HomePage() {
                         garantir la fiabilité de votre code.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/unit-testing">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                   <Card>
                     <CardHeader>
@@ -284,14 +284,14 @@ export default function HomePage() {
                         applications sous charge.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/performance-testing">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                 </div>
               </TabsContent>
@@ -310,14 +310,14 @@ export default function HomePage() {
                         procédurale.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/c-debutants">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                   <Card>
                     <CardHeader>
@@ -332,14 +332,14 @@ export default function HomePage() {
                         applications performantes.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/c-avance">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                   <Card>
                     <CardHeader>
@@ -354,14 +354,14 @@ export default function HomePage() {
                         le langage C.
                       </p>
                     </CardContent>
-                    <CardFooter>
+                    {/* <CardFooter>
                       <Button asChild variant="ghost" className="w-full">
                         <Link to="/formations/programmation-systeme">
                           En savoir plus{" "}
                           <ChevronRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
-                    </CardFooter>
+                    </CardFooter> */}
                   </Card>
                 </div>
               </TabsContent>

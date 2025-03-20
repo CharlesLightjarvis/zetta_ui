@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 
 import { Card, CardContent, CardFooter } from "./ui/card";
+import user from "../assets/user.png";
 
 const testimonials = [
   {
@@ -85,7 +86,8 @@ export function Testimonials() {
                 <CardFooter>
                   <div className="flex items-center space-x-4">
                     <img
-                      src={testimonial.image || "/placeholder.svg"}
+                      // src={testimonial.image || user}
+                      src={user}
                       alt={testimonial.name}
                       width={50}
                       height={50}

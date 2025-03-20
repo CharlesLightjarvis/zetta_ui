@@ -1,19 +1,23 @@
 import { create } from "zustand";
 import axios from "axios";
 import type { Formation } from "~/types/formation";
+import type { FormationDetails } from "~/types/formation-details";
 import api from "~/api";
 
 interface FormationStore {
   formations: Formation[];
+  formationDetails: FormationDetails | null; // Changed from Formation to Formation | null
   loading: boolean;
   error: string | null;
   fetchFormations: () => Promise<void>;
+  fetchFormationDetails: (slug: string) => Promise<void>;
   //   addFormation: (formationData: FormationPayload) => Promise<boolean>;
   removeFormation: (id: string) => Promise<boolean>;
 }
 
 const useFormationStore = create<FormationStore>((set) => ({
   formations: [],
+  formationDetails: null, // Initialize as null
   loading: false,
   error: null,
 
@@ -21,13 +25,31 @@ const useFormationStore = create<FormationStore>((set) => ({
     set({ loading: true, error: null, formations: [] });
     try {
       const response = await api.get<{ formations: Formation[] }>(
-        "/admin/formations"
+        "/guest/formations"
       );
       // Access the formations array from response.data.formations
       const formations = response.data.formations;
       set({ formations, loading: false, error: null });
     } catch (error: any) {
       set({ error: error.message, loading: false, formations: [] });
+    }
+  },
+
+  fetchFormationDetails: async (slug: string) => {
+    set({ loading: true, error: null }); // Don't reset formations here
+    try {
+      const response = await api.get<{ formation: FormationDetails }>( // Changed from Formation[] to Formation
+        `/guest/formations/slug/${slug}`
+      );
+
+      const formationDetails = response.data.formation; // Changed from formations to formation
+      set({ formationDetails, loading: false, error: null });
+    } catch (error: any) {
+      set({
+        error: error.message,
+        loading: false,
+        formationDetails: null, // Set to null on error, not empty string
+      });
     }
   },
 

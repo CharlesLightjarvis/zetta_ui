@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Link } from "react-router";
 import { Button } from "./ui/button";
+import cLogo from "~/assets/c-logo.png";
+import devOps from "~/assets/devOps.png";
+import istqb from "~/assets/istqbLogoTest.png";
+import devWeb from "~/assets/devweb.png";
 
 const slides = [
   {
@@ -13,7 +16,7 @@ const slides = [
     title: "Formations DevOps",
     description:
       "Maîtrisez les outils et pratiques DevOps pour accélérer vos déploiements",
-    image: "/placeholder.svg?height=600&width=1200",
+    image: devOps,
     link: "/formations/devops-professionnel",
   },
   {
@@ -21,7 +24,7 @@ const slides = [
     title: "Certifications Testing",
     description:
       "Devenez un expert en tests logiciels avec nos formations certifiantes",
-    image: "/placeholder.svg?height=600&width=1200",
+    image: istqb,
     link: "/formations/test-automation-expert",
   },
   {
@@ -29,7 +32,7 @@ const slides = [
     title: "Développement Web",
     description:
       "Apprenez à créer des applications web modernes et performantes",
-    image: "/placeholder.svg?height=600&width=1200",
+    image: devWeb,
     link: "/formations/fullstack-javascript",
   },
   {
@@ -37,7 +40,7 @@ const slides = [
     title: "Langage C",
     description:
       "Maîtrisez le langage C pour le développement système et embarqué",
-    image: "/placeholder.svg?height=600&width=1200",
+    image: cLogo,
     link: "/formations/c-debutants",
   },
 ];
@@ -76,7 +79,8 @@ export function HeroSlider() {
           className="absolute inset-0"
           style={{
             backgroundImage: `url(${slides[current].image})`,
-            backgroundSize: "cover",
+            backgroundSize: "contain",
+            backgroundColor: "#0E1113",
             backgroundPosition: "center",
           }}
         >
@@ -98,7 +102,7 @@ export function HeroSlider() {
             >
               {slides[current].description}
             </motion.p>
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 }}
@@ -111,7 +115,7 @@ export function HeroSlider() {
               >
                 <Link to={slides[current].link}>En savoir plus</Link>
               </Button>
-            </motion.div>
+            </motion.div> */}
           </div>
         </motion.div>
       </AnimatePresence>
