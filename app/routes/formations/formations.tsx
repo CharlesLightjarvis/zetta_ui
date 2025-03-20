@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -32,203 +32,69 @@ import { Link } from "react-router";
 import { Footer } from "~/components/footer";
 import { MainNav } from "~/components/main-nav";
 import { Input } from "~/components/ui/input";
-
-const formations = [
-  {
-    id: 1,
-    title: "DevOps Professionnel", //
-    description:
-      "Maîtrisez les outils et pratiques DevOps pour optimiser le cycle de développement logiciel",
-    image: "/placeholder.svg?height=400&width=600", //
-    duration: "10 semaines", //
-    level: "Avancé", //
-    students: 324, // remplacer par enrolled_students
-    price: "3 500 €", //
-    instructor: "Thomas Dubois", //
-    courseType: "Cours du soir", //
-    startDate: "15 janvier 2024", //
-    endDate: "26 mars 2024", //
-    category: "devops", //
-    certifications: [
-      "AWS Certified DevOps Engineer",
-      "Docker Certified Associate",
-    ],
-    link: "/formations/devops-professionnel",
-  },
-  {
-    id: 2,
-    title: "Test Automation Expert", // remplacer par name dans la BD
-    description:
-      "Apprenez à automatiser les tests pour améliorer la qualité logicielle et accélérer les livraisons",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "8 semaines",
-    level: "Intermédiaire",
-    students: 256,
-    price: "2 800 €",
-    instructor: "Sophie Martin",
-    courseType: "Cours du soir",
-    startDate: "5 février 2024",
-    endDate: "29 mars 2024",
-    category: "testing",
-    certifications: ["ISTQB Certified Tester", "Selenium Certification"],
-    link: "/formations/test-automation-expert",
-  },
-  {
-    id: 3,
-    title: "Développeur Full-Stack JavaScript",
-    description:
-      "Devenez un développeur complet maîtrisant le frontend et le backend avec JavaScript",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "12 semaines",
-    level: "Intermédiaire à Avancé",
-    students: 412,
-    price: "3 900 €",
-    instructor: "Julie Leroy",
-    courseType: "Cours du soir",
-    startDate: "10 mars 2024",
-    endDate: "31 mai 2024",
-    category: "web",
-    certifications: ["JavaScript Certification", "Node.js Certification"],
-    link: "/formations/fullstack-javascript",
-  },
-  {
-    id: 4,
-    title: "Docker & Kubernetes",
-    description:
-      "Apprenez à déployer et gérer des applications conteneurisées à grande échelle",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "6 semaines",
-    level: "Intermédiaire",
-    students: 189,
-    price: "2 200 €",
-    instructor: "Marc Dupont",
-    courseType: "Cours du soir",
-    startDate: "20 février 2024",
-    endDate: "2 avril 2024",
-    category: "devops",
-    certifications: [
-      "Docker Certified Associate",
-      "Certified Kubernetes Administrator",
-    ],
-    link: "/formations/docker-kubernetes",
-  },
-  {
-    id: 5,
-    title: "CI/CD Pipeline",
-    description:
-      "Mettez en place des pipelines d'intégration et de déploiement continus",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "4 semaines",
-    level: "Intermédiaire",
-    students: 156,
-    price: "1 800 €",
-    instructor: "Thomas Dubois",
-    courseType: "Cours du jour",
-    startDate: "15 mars 2024",
-    endDate: "12 avril 2024",
-    category: "devops",
-    certifications: ["Jenkins Certified Engineer"],
-    link: "/formations/cicd-pipeline",
-  },
-  {
-    id: 6,
-    title: "Tests Unitaires",
-    description:
-      "Maîtrisez les techniques de tests unitaires pour garantir la fiabilité de votre code",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "5 semaines",
-    level: "Débutant à Intermédiaire",
-    students: 203,
-    price: "1 500 €",
-    instructor: "Sophie Martin",
-    courseType: "Cours du jour",
-    startDate: "10 avril 2024",
-    endDate: "15 mai 2024",
-    category: "testing",
-    certifications: ["ISTQB Foundation Level"],
-    link: "/formations/unit-testing",
-  },
-  {
-    id: 7,
-    title: "React & TypeScript",
-    description:
-      "Créez des interfaces utilisateur dynamiques et performantes avec React et TypeScript",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "8 semaines",
-    level: "Intermédiaire",
-    students: 278,
-    price: "2 600 €",
-    instructor: "Julie Leroy",
-    courseType: "Cours du soir",
-    startDate: "5 mai 2024",
-    endDate: "28 juin 2024",
-    category: "web",
-    certifications: ["React Developer Certification"],
-    link: "/formations/react-typescript",
-  },
-  {
-    id: 8,
-    title: "C pour Débutants",
-    description:
-      "Apprenez les bases du langage C et la programmation procédurale",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "6 semaines",
-    level: "Débutant",
-    students: 167,
-    price: "1 900 €",
-    instructor: "Alexandre Petit",
-    courseType: "Cours du jour",
-    startDate: "15 juin 2024",
-    endDate: "26 juillet 2024",
-    category: "langc",
-    certifications: ["C Programming Certification"],
-    link: "/formations/c-debutants",
-  },
-  {
-    id: 9,
-    title: "Performance Testing",
-    description:
-      "Évaluez et optimisez les performances de vos applications sous charge",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "6 semaines",
-    level: "Avancé",
-    students: 142,
-    price: "2 400 €",
-    instructor: "Sophie Martin",
-    courseType: "Cours du jour",
-    startDate: "10 juillet 2024",
-    endDate: "21 août 2024",
-    category: "testing",
-    certifications: [
-      "JMeter Certification",
-      "Performance Testing Professional",
-    ],
-    link: "/formations/performance-testing",
-  },
-];
+import useFormationStore from "~/store/use-formation-store";
+import { LoadingScreen } from "~/components/loading-screen";
+import useCategoryStore from "~/store/use-category-store";
 
 export default function FormationsPage() {
+  const { formations, fetchFormations, loading, error, removeFormation } =
+    useFormationStore();
+
+  const { categories, fetchCategories } = useCategoryStore();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [levelFilter, setLevelFilter] = useState("all");
 
   const filteredFormations = formations.filter((formation) => {
     const matchesSearch =
-      formation.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      formation.description.toLowerCase().includes(searchTerm.toLowerCase());
+      formation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      formation.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
-      categoryFilter === "all" || formation.category === categoryFilter;
+      categoryFilter === "all" || formation.category.name === categoryFilter;
 
     const matchesLevel =
       levelFilter === "all" ||
-      (levelFilter === "debutant" && formation.level.includes("Débutant")) ||
-      (levelFilter === "intermediaire" &&
-        formation.level.includes("Intermédiaire")) ||
-      (levelFilter === "avance" && formation.level.includes("Avancé"));
+      (levelFilter === "debutant" && formation.level === "beginner") ||
+      (levelFilter === "intermediaire" && formation.level === "intermediate") ||
+      (levelFilter === "avance" && formation.level === "advanced");
 
     return matchesSearch && matchesCategory && matchesLevel;
   });
+
+  const getCourseTypeLabel = (courseType: string) => {
+    return courseType.toLowerCase() === "day course"
+      ? "Cours du jour"
+      : "Cours du soir";
+  };
+
+  const getBadgeLabel = (level: string) => {
+    switch (level) {
+      case "beginner":
+        return "Débutant";
+      case "intermediate":
+        return "Intermédiaire";
+      case "advanced":
+        return "Avancé";
+      default:
+        return "Tous les niveaux";
+    }
+  };
+
+  useEffect(() => {
+    fetchFormations();
+    fetchCategories();
+  }, [fetchFormations, fetchCategories]);
+
+  if (loading)
+    return (
+      <div>
+        <LoadingScreen />
+      </div>
+    );
+
+  if (error) return <div>Erreur : {error}</div>;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -281,10 +147,11 @@ export default function FormationsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Toutes les catégories</SelectItem>
-                    <SelectItem value="web">Développement Web</SelectItem>
-                    <SelectItem value="devops">DevOps</SelectItem>
-                    <SelectItem value="testing">Testing</SelectItem>
-                    <SelectItem value="langc">Langage C</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <Select value={levelFilter} onValueChange={setLevelFilter}>
@@ -337,7 +204,7 @@ export default function FormationsPage() {
                     <div className="aspect-video w-full overflow-hidden">
                       <img
                         src={formation.image || "/placeholder.svg"}
-                        alt={formation.title}
+                        alt={formation.name}
                         width={600}
                         height={400}
                         className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
@@ -345,38 +212,40 @@ export default function FormationsPage() {
                     </div>
                     <CardHeader>
                       <div className="flex items-center justify-between">
-                        <Badge>{formation.level}</Badge>
+                        <Badge>{getBadgeLabel(formation.level)}</Badge>
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Clock className="mr-1 h-4 w-4" />
-                          {formation.duration}
+                          {formation.duration} semaines
                         </div>
                       </div>
-                      <CardTitle className="mt-2">{formation.title}</CardTitle>
+                      <CardTitle className="mt-2 text-2xl">
+                        {formation.name}
+                      </CardTitle>
                       <CardDescription>{formation.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Users className="mr-1 h-4 w-4" />
-                          <span>{formation.students} étudiants</span>
+                          <span>{formation.capacity} étudiants</span>
                         </div>
                         <div className="font-bold text-primary">
-                          {formation.price}
+                          {formation.price} DT
                         </div>
                       </div>
                       <div className="flex items-center text-sm text-muted-foreground mb-2">
                         <User className="mr-1 h-4 w-4" />
-                        <span>Formateur: {formation.instructor}</span>
+                        <span>Formateur: {formation.teacher.fullName}</span>
                       </div>
                       <div className="flex items-center text-sm text-muted-foreground mb-2">
                         <Calendar className="mr-1 h-4 w-4" />
                         <span>
-                          Du {formation.startDate} au {formation.endDate}
+                          Du {formation.start_date} au {formation.end_date}
                         </span>
                       </div>
                       <div className="text-sm text-muted-foreground mb-4">
                         <span className="font-medium">Type: </span>
-                        <span>{formation.courseType}</span>
+                        <span>{getCourseTypeLabel(formation.course_type)}</span>
                       </div>
                       <div className="mt-4">
                         <h4 className="text-sm font-medium">
@@ -386,7 +255,7 @@ export default function FormationsPage() {
                           {formation.certifications.map((cert, i) => (
                             <li key={i} className="flex items-start">
                               <Award className="mr-2 h-4 w-4 text-primary" />
-                              <span className="text-sm">{cert}</span>
+                              <span className="text-sm">{cert.name}</span>
                             </li>
                           ))}
                         </ul>

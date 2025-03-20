@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import istqbLogo from "~/assets/istqb-logo.png";
 
 const certifications = {
   devops: [
@@ -112,7 +113,7 @@ const certifications = {
       title: "ISTQB Certified Tester - Foundation Level",
       description:
         "Acquérez les connaissances fondamentales en matière de tests logiciels",
-      image: "/placeholder.svg?height=300&width=300",
+      image: istqbLogo,
       provider: "International Software Testing Qualifications Board",
       duration: "Validité permanente",
       level: "Fondation",
