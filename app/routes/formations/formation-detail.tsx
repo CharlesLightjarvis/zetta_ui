@@ -22,6 +22,20 @@ import {
 } from "~/components/ui/accordion";
 import useFormationStore from "~/store/use-formation-store";
 import { LoadingScreen } from "~/components/loading-screen";
+import user from "~/assets/user.png";
+import type { Session } from "~/types/formation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
+import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
+import api from "~/api";
+import echo from "../../echo";
 
 // Données fictives pour les formations
 const getCourseTypeLabel = (courseType: string) => {
@@ -48,11 +62,44 @@ export default function FormationDetailPage() {
   const { formationDetails, fetchFormationDetails, loading, error } =
     useFormationStore();
 
+  const formation = formationDetails;
+
+  // Ajoutez cette fonction helper en haut du fichier
+  const getTotalEnrolledStudents = (sessions: Session[]): number => {
+    return sessions.reduce(
+      (total, session) => total + session.enrolled_students,
+      0
+    );
+  };
+
+  echo
+    .channel("formation-interests")
+    .listen("NewFormationInterest", (e: any) => {
+      console.log(e);
+    });
+
+  const handlePreregistration = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      fullName: formData.get("fullName"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      message: formData.get("message"),
+      formation_id: formation?.id, // Le slug de la formation
+    };
+    console.log("Données de préinscription:", data);
+    await api.post("/guest/interests", data);
+    setIsDialogOpen(false);
+  };
+
   useEffect(() => {
     if (slug) {
       fetchFormationDetails(slug);
     }
   }, [fetchFormationDetails, slug]);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   if (loading)
     return (
@@ -67,7 +114,6 @@ export default function FormationDetailPage() {
   // const formationSlug = Array.isArray(slug) ? slug[0] : slug;
 
   // Récupérer les données de la formation
-  const formation = formationDetails;
 
   if (!formation) {
     return (
@@ -126,7 +172,10 @@ export default function FormationDetailPage() {
               </div>
               <div className="flex items-center">
                 <Users className="mr-2 h-5 w-5" />
-                <span>{formation.enrolled_students} étudiants</span>
+                <span>
+                  {getTotalEnrolledStudents(formation.sessions)} étudiants
+                  inscrits
+                </span>
               </div>
             </div>
           </div>
@@ -184,21 +233,22 @@ export default function FormationDetailPage() {
                     <h2 className="text-2xl font-bold mb-4">Formateur</h2>
                     <div className="flex items-start space-x-4">
                       <img
-                        src={formation.teacher.imageUrl || "/placeholder.svg"}
-                        alt={formation.teacher.fullName}
+                        // src={formation.teacher.imageUrl || "/placeholder.svg"}
+                        src={user}
+                        alt={formation.sessions[0].teacher.fullName}
                         width={100}
                         height={100}
                         className="rounded-full"
                       />
                       <div>
                         <h3 className="text-xl font-medium">
-                          {formation.teacher.fullName}
+                          {formation.sessions[0].teacher.fullName}
                         </h3>
                         <p className="text-primary font-medium">
-                          {formation.teacher.title}
+                          {formation.sessions[0].teacher.title}
                         </p>
                         <p className="text-muted-foreground mt-2">
-                          {formation.teacher.bio}
+                          {formation.sessions[0].teacher.bio}
                         </p>
                       </div>
                     </div>
@@ -216,11 +266,63 @@ export default function FormationDetailPage() {
                           <p className="text-muted-foreground">TVA incluse</p>
                         </div>
 
-                        <Button asChild className="w-full">
-                          <Link to={`/contact#interest-form`}>
-                            Exprimer mon intérêt
-                          </Link>
-                        </Button>
+                        {/* // dialog submission */}
+                        <Dialog
+                          open={isDialogOpen}
+                          onOpenChange={setIsDialogOpen}
+                        >
+                          <DialogTrigger asChild>
+                            <Button className="w-full hover:cursor-pointer">
+                              Faire une Préinscription
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>
+                                Préinscription à la formation
+                              </DialogTitle>
+                            </DialogHeader>
+                            <form
+                              onSubmit={handlePreregistration}
+                              className="space-y-4"
+                            >
+                              <div className="space-y-2">
+                                <Label htmlFor="fullName">Nom complet</Label>
+                                <Input id="fullName" name="fullName" required />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                  id="email"
+                                  name="email"
+                                  type="email"
+                                  required
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="phone">Téléphone</Label>
+                                <Input
+                                  id="phone"
+                                  name="phone"
+                                  type="tel"
+                                  required
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="message">Message</Label>
+                                <Textarea
+                                  id="message"
+                                  name="message"
+                                  rows={5}
+                                  placeholder="Précisez vos attentes, questions ou besoins spécifiques..."
+                                />
+                              </div>
+                              <Button type="submit" className="w-full">
+                                Envoyer la préinscription
+                              </Button>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
 
                         <div className="pt-4 border-t">
                           <h3 className="font-medium mb-2 flex items-center">
@@ -228,31 +330,39 @@ export default function FormationDetailPage() {
                             Prochaine session
                           </h3>
                           <p className="font-medium">
-                            Du {formation.start_date} au {formation.end_date}
+                            Du {formation.sessions[0].start_date} au{" "}
+                            {formation.sessions[0].end_date}
                           </p>
                           <div className="mt-2">
                             <h4 className="text-sm font-medium mb-1">
                               Type de cours :
                             </h4>
                             <p className="text-sm text-muted-foreground">
-                              {getCourseTypeLabel(formation.course_type)}
+                              {getCourseTypeLabel(
+                                formation.sessions[0].course_type
+                              )}
                             </p>
                           </div>
                         </div>
 
-                        {/* <div className="pt-4 border-t">
+                        <div className="pt-4 border-t">
                           <h3 className="font-medium mb-2 flex items-center">
                             <Calendar className="mr-2 h-5 w-5 text-primary" />
                             Sessions suivantes
                           </h3>
                           <ul className="space-y-2">
-                            {formation.nextSessions.map((session, index) => (
-                              <li key={index} className="text-muted-foreground">
-                                {session}
-                              </li>
-                            ))}
+                            {formation.sessions
+                              .slice(1)
+                              .map((session, index) => (
+                                <li
+                                  key={index}
+                                  className="text-muted-foreground"
+                                >
+                                  {session.start_date}
+                                </li>
+                              ))}
                           </ul>
-                        </div> */}
+                        </div>
 
                         <div className="pt-4 border-t">
                           <h3 className="font-medium mb-2 flex items-center">

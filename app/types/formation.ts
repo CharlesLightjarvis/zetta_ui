@@ -23,6 +23,16 @@ interface Certification {
   updated_at: string;
 }
 
+export interface Session {
+  id: string;
+  start_date: string;
+  end_date: string;
+  course_type: "DAY" | "NIGHT";
+  capacity: number;
+  enrolled_students: number;
+  teacher: Teacher;
+}
+
 export interface Formation {
   id: string;
   name: string;
@@ -32,13 +42,9 @@ export interface Formation {
   level: "beginner" | "intermediate" | "advanced";
   duration: number; // en semaines
   price: number;
-  capacity: number;
-  enrolled_students: number;
   teacher: Teacher;
   category: Category;
-  course_type: "DAY" | "NIGHT";
-  start_date: string; // Format YYYY-MM-DD
-  end_date: string; // Format YYYY-MM-DD
+  sessions: Session[];
   link: string;
   certifications: Certification[];
   created_at: string;

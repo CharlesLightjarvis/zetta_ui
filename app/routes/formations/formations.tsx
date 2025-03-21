@@ -10,6 +10,8 @@ import {
   Users,
   User,
   Calendar,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   Select,
@@ -35,6 +37,9 @@ import { Input } from "~/components/ui/input";
 import useFormationStore from "~/store/use-formation-store";
 import { LoadingScreen } from "~/components/loading-screen";
 import useCategoryStore from "~/store/use-category-store";
+import type { Session } from "~/types/formation";
+
+const ITEMS_PER_PAGE = 9; // Nombre d'éléments par page
 
 export default function FormationsPage() {
   const { formations, fetchFormations, loading, error, removeFormation } =
@@ -45,6 +50,14 @@ export default function FormationsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [levelFilter, setLevelFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const getTotalEnrolledStudents = (sessions: Session[]): number => {
+    return sessions.reduce(
+      (total, session) => total + session.enrolled_students,
+      0
+    );
+  };
 
   const filteredFormations = formations.filter((formation) => {
     const matchesSearch =
@@ -62,6 +75,12 @@ export default function FormationsPage() {
 
     return matchesSearch && matchesCategory && matchesLevel;
   });
+
+  // Calcul de la pagination
+  const totalPages = Math.ceil(filteredFormations.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentFormations = filteredFormations.slice(startIndex, endIndex);
 
   const getCourseTypeLabel = (courseType: string) => {
     return courseType.toLowerCase() === "day course"
@@ -82,17 +101,17 @@ export default function FormationsPage() {
     }
   };
 
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter, levelFilter]);
+
   useEffect(() => {
     fetchFormations();
     fetchCategories();
   }, [fetchFormations, fetchCategories]);
 
-  if (loading)
-    return (
-      <div>
-        <LoadingScreen />
-      </div>
-    );
+  if (loading) return <LoadingScreen />;
 
   if (error) return <div>Erreur : {error}</div>;
 
@@ -104,6 +123,7 @@ export default function FormationsPage() {
         </div>
       </header>
       <main className="flex-1">
+        {/* Votre section hero existante */}
         <section className="bg-muted py-12 md:py-16 lg:py-20">
           <div className="container">
             <motion.div
@@ -125,6 +145,7 @@ export default function FormationsPage() {
         </section>
 
         <section className="container py-12">
+          {/* Vos filtres existants */}
           <div className="mb-8 space-y-4">
             <div className="flex flex-col gap-4 sm:flex-row">
               <div className="relative flex-1">
@@ -191,89 +212,140 @@ export default function FormationsPage() {
               </Button>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredFormations.map((formation, index) => (
-                <motion.div
-                  key={formation.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="h-full overflow-hidden">
-                    <div className="aspect-video w-full overflow-hidden">
-                      <img
-                        src={formation.image || "/placeholder.svg"}
-                        alt={formation.name}
-                        width={600}
-                        height={400}
-                        className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-                      />
-                    </div>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <Badge>{getBadgeLabel(formation.level)}</Badge>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Clock className="mr-1 h-4 w-4" />
-                          {formation.duration} semaines
-                        </div>
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {currentFormations.map((formation, index) => (
+                  <motion.div
+                    key={formation.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <Card className="h-full overflow-hidden">
+                      <div className="aspect-video w-full overflow-hidden">
+                        <img
+                          src={formation.image || "/placeholder.svg"}
+                          alt={formation.name}
+                          width={600}
+                          height={400}
+                          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                        />
                       </div>
-                      <CardTitle className="mt-2 text-2xl">
-                        {formation.name}
-                      </CardTitle>
-                      <CardDescription>{formation.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Users className="mr-1 h-4 w-4" />
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <Badge>{getBadgeLabel(formation.level)}</Badge>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <Clock className="mr-1 h-4 w-4" />
+                            {formation.duration} semaines
+                          </div>
+                        </div>
+                        <CardTitle className="mt-2 text-2xl">
+                          {formation.name}
+                        </CardTitle>
+                        <CardDescription>
+                          {formation.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <Users className="mr-1 h-4 w-4" />
+                            <span>
+                              {getTotalEnrolledStudents(formation.sessions)}{" "}
+                              étudiants inscrits
+                            </span>
+                          </div>
+                          <div className="font-bold text-primary">
+                            {formation.price} DT
+                          </div>
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground mb-2">
+                          <User className="mr-1 h-4 w-4" />
                           <span>
-                            {formation.enrolled_students} étudiants inscrits
+                            Formateur: {formation.sessions[0].teacher.fullName}
                           </span>
                         </div>
-                        <div className="font-bold text-primary">
-                          {formation.price} DT
+                        <div className="flex items-center text-sm text-muted-foreground mb-2">
+                          <Calendar className="mr-1 h-4 w-4" />
+                          <span>
+                            Du {formation.sessions[0].start_date} au{" "}
+                            {formation.sessions[0].end_date}
+                          </span>
                         </div>
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground mb-2">
-                        <User className="mr-1 h-4 w-4" />
-                        <span>Formateur: {formation.teacher.fullName}</span>
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground mb-2">
-                        <Calendar className="mr-1 h-4 w-4" />
-                        <span>
-                          Du {formation.start_date} au {formation.end_date}
-                        </span>
-                      </div>
-                      <div className="text-sm text-muted-foreground mb-4">
-                        <span className="font-medium">Type: </span>
-                        <span>{getCourseTypeLabel(formation.course_type)}</span>
-                      </div>
-                      <div className="mt-4">
-                        <h4 className="text-sm font-medium">
-                          Certifications :
-                        </h4>
-                        <ul className="mt-2 space-y-1">
-                          {formation.certifications.map((cert, i) => (
-                            <li key={i} className="flex items-start">
-                              <Award className="mr-2 h-4 w-4 text-primary" />
-                              <span className="text-sm">{cert.name}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button asChild className="w-full">
-                        <Link to={formation.link}>
-                          Découvrir cette formation
-                        </Link>
+                        <div className="text-sm text-muted-foreground mb-4">
+                          <span className="font-medium">Type: </span>
+                          <span>
+                            {getCourseTypeLabel(
+                              formation.sessions[0].course_type
+                            )}
+                          </span>
+                        </div>
+                        <div className="mt-4">
+                          <h4 className="text-sm font-medium">
+                            Certifications :
+                          </h4>
+                          <ul className="mt-2 space-y-1">
+                            {formation.certifications.map((cert, i) => (
+                              <li key={i} className="flex items-start">
+                                <Award className="mr-2 h-4 w-4 text-primary" />
+                                <span className="text-sm">{cert.name}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <Button asChild className="w-full">
+                          <Link to={formation.link}>
+                            Découvrir cette formation
+                          </Link>
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pageNumber) => (
+                      <Button
+                        key={pageNumber}
+                        variant={
+                          pageNumber === currentPage ? "default" : "outline"
+                        }
+                        onClick={() => setCurrentPage(pageNumber)}
+                      >
+                        {pageNumber}
                       </Button>
-                    </CardFooter>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
+                    )
+                  )}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>

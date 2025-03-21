@@ -37,22 +37,28 @@ interface Module {
   lessons: Lesson[];
 }
 
+export interface Session {
+  id: string;
+  start_date: string;
+  end_date: string;
+  course_type: "DAY" | "NIGHT";
+  capacity: number;
+  enrolled_students: number;
+  teacher: Teacher;
+}
+
 export interface FormationDetails {
   id: string;
   name: string;
   slug: string;
-  description: string;
-  image: string;
+  description?: string;
+  image?: string;
   level: "beginner" | "intermediate" | "advanced";
   duration: number; // en semaines
   price: number;
-  capacity: number;
-  enrolled_students: number;
   teacher: Teacher;
   category: Category;
-  course_type: "DAY" | "NIGHT";
-  start_date: string; // Format YYYY-MM-DD
-  end_date: string; // Format YYYY-MM-DD
+  sessions: Session[];
   link: string;
   certifications: Certification[];
   prerequisites: string[];

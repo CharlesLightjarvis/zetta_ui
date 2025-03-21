@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { MainNav } from "~/components/main-nav";
@@ -27,6 +27,8 @@ import {
 import { Textarea } from "~/components/ui/textarea";
 import { Footer } from "~/components/footer";
 import localisation from "~/assets/localisation.png";
+import useCategoryStore from "~/store/use-category-store";
+import { LoadingScreen } from "~/components/loading-screen";
 
 export default function ContactPage() {
   const [interestFormData, setInterestFormData] = useState({
@@ -37,9 +39,16 @@ export default function ContactPage() {
     message: "",
   });
 
+  const { categories, fetchCategories, loading, error } = useCategoryStore();
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
   const [contactFormData, setContactFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     subject: "",
     message: "",
   });
@@ -89,10 +98,15 @@ export default function ContactPage() {
     setContactFormData({
       name: "",
       email: "",
+      phone: "",
       subject: "",
       message: "",
     });
   };
+
+  if (loading) return <LoadingScreen />;
+
+  if (error) return <div>Erreur : {error}</div>;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -230,6 +244,17 @@ export default function ContactPage() {
                         />
                       </div>
                       <div className="space-y-2">
+                        <Label htmlFor="contact-phone">Phone</Label>
+                        <Input
+                          id="contact-phone"
+                          name="phone"
+                          type="tel"
+                          value={contactFormData.phone}
+                          onChange={handleContactFormChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
                         <Label htmlFor="contact-subject">Sujet</Label>
                         <Select
                           name="subject"
@@ -242,7 +267,10 @@ export default function ContactPage() {
                           }
                           required
                         >
-                          <SelectTrigger id="contact-subject">
+                          <SelectTrigger
+                            id="contact-subject"
+                            className="w-full"
+                          >
                             <SelectValue placeholder="Sélectionnez un sujet" />
                           </SelectTrigger>
                           <SelectContent>
@@ -266,6 +294,7 @@ export default function ContactPage() {
                         <Label htmlFor="contact-message">Message</Label>
                         <Textarea
                           id="contact-message"
+                          placeholder="Écrivez votre message..."
                           name="message"
                           rows={5}
                           value={contactFormData.message}
@@ -379,37 +408,21 @@ export default function ContactPage() {
                           }
                           required
                         >
-                          <SelectTrigger id="interest-formation">
+                          <SelectTrigger
+                            id="interest-formation"
+                            className="w-full"
+                          >
                             <SelectValue placeholder="Sélectionnez une formation" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="devops-professionnel">
-                              DevOps Professionnel
-                            </SelectItem>
-                            <SelectItem value="test-automation-expert">
-                              Test Automation Expert
-                            </SelectItem>
-                            <SelectItem value="fullstack-javascript">
-                              Développeur Full-Stack JavaScript
-                            </SelectItem>
-                            <SelectItem value="docker-kubernetes">
-                              Docker & Kubernetes
-                            </SelectItem>
-                            <SelectItem value="cicd-pipeline">
-                              CI/CD Pipeline
-                            </SelectItem>
-                            <SelectItem value="unit-testing">
-                              Tests Unitaires
-                            </SelectItem>
-                            <SelectItem value="react-typescript">
-                              React & TypeScript
-                            </SelectItem>
-                            <SelectItem value="c-debutants">
-                              C pour Débutants
-                            </SelectItem>
-                            <SelectItem value="performance-testing">
-                              Performance Testing
-                            </SelectItem>
+                            {categories.map((category) => (
+                              <SelectItem
+                                key={category.id}
+                                value={category.name}
+                              >
+                                {category.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>

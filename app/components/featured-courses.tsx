@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Clock, Award, Users, User } from "lucide-react";
-
+import { Clock, Award, Users, User, ChevronRight } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "./ui/button";
 import {
@@ -17,67 +16,24 @@ import { Badge } from "./ui/badge";
 import useFormationStore from "~/store/use-formation-store";
 import { useEffect } from "react";
 import { LoadingScreen } from "./loading-screen";
-
-const featuredCourses = [
-  {
-    id: 1,
-    title: "DevOps Professionnel",
-    description:
-      "Maîtrisez les outils et pratiques DevOps pour optimiser le cycle de développement logiciel",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "10 semaines",
-    level: "Avancé",
-    students: 324,
-    price: "3 500 €",
-    instructor: "Thomas Dubois",
-    courseType: "Cours du soir",
-    startDate: "15 janvier 2024",
-    endDate: "26 mars 2024",
-    certifications: [
-      "AWS Certified DevOps Engineer",
-      "Docker Certified Associate",
-    ],
-    link: "/formations/devops-professionnel",
-  },
-  {
-    id: 2,
-    title: "Test Automation Expert",
-    description:
-      "Apprenez à automatiser les tests pour améliorer la qualité logicielle et accélérer les livraisons",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "8 semaines",
-    level: "Intermédiaire",
-    students: 256,
-    price: "2 800 €",
-    instructor: "Sophie Martin",
-    courseType: "Cours du soir",
-    startDate: "5 février 2024",
-    endDate: "29 mars 2024",
-    certifications: ["ISTQB Certified Tester", "Selenium Certification"],
-    link: "/formations/test-automation-expert",
-  },
-  {
-    id: 3,
-    title: "Développeur Full-Stack JavaScript",
-    description:
-      "Devenez un développeur complet maîtrisant le frontend et le backend avec JavaScript",
-    image: "/placeholder.svg?height=400&width=600",
-    duration: "12 semaines",
-    level: "Intermédiaire à Avancé",
-    students: 412,
-    price: "3 900 €",
-    instructor: "Julie Leroy",
-    courseType: "Cours du soir",
-    startDate: "10 mars 2024",
-    endDate: "31 mai 2024",
-    certifications: ["JavaScript Certification", "Node.js Certification"],
-    link: "/formations/fullstack-javascript",
-  },
-];
+import type { Session } from "~/types/formation";
 
 export function FeaturedCourses() {
   const { formations, fetchFormations, loading, error, removeFormation } =
     useFormationStore();
+
+  const getTotalEnrolledStudents = (sessions: Session[]): number => {
+    return sessions.reduce(
+      (total, session) => total + session.enrolled_students,
+      0
+    );
+  };
+
+  const getCourseTypeLabel = (courseType: string) => {
+    return courseType.toLowerCase() === "day course"
+      ? "Cours du jour"
+      : "Cours du soir";
+  };
 
   useEffect(() => {
     fetchFormations();
@@ -91,6 +47,8 @@ export function FeaturedCourses() {
     );
 
   if (error) return <div>Erreur : {error}</div>;
+
+  const featuredFormations = formations.slice(0, 3);
 
   return (
     <section className="container py-12 md:py-16 lg:py-20">
@@ -110,7 +68,7 @@ export function FeaturedCourses() {
       </motion.div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {formations.map((course, index) => (
+        {featuredFormations.map((course, index) => (
           <motion.div
             key={course.id}
             initial={{ opacity: 0, y: 20 }}
@@ -143,7 +101,10 @@ export function FeaturedCourses() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Users className="mr-1 h-4 w-4" />
-                    <span>{course.enrolled_students} étudiants inscrits</span>
+                    <span>
+                      {getTotalEnrolledStudents(course.sessions)} étudiants
+                      inscrits
+                    </span>
                   </div>
                   <div className="font-bold text-primary">
                     {course.price} DT
@@ -151,11 +112,11 @@ export function FeaturedCourses() {
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground mb-2">
                   <User className="mr-1 h-4 w-4" />
-                  <span>Formateur: {course.teacher.fullName}</span>
+                  <span>Formateur: {course.sessions[0].teacher.fullName}</span>
                 </div>
                 <div className="text-sm text-muted-foreground mb-4">
                   <span className="font-medium">Type: </span>
-                  <span>{course.course_type}</span>
+                  {getCourseTypeLabel(course.sessions[0].course_type)}
                 </div>
                 <div className="mt-4">
                   <h4 className="text-sm font-medium">Certifications :</h4>
