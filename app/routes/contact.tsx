@@ -29,6 +29,8 @@ import { Footer } from "~/components/footer";
 import localisation from "~/assets/localisation.png";
 import useCategoryStore from "~/store/use-category-store";
 import { LoadingScreen } from "~/components/loading-screen";
+import defaultLearningImage from "~/assets/Learning-bro.png";
+import UpperNav from "~/components/upper-nav";
 
 export default function ContactPage() {
   const [interestFormData, setInterestFormData] = useState({
@@ -110,14 +112,27 @@ export default function ContactPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center">
+      <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <UpperNav />
+        <div className="container border-b">
           <MainNav />
         </div>
       </header>
       <main className="flex-1">
-        <section className="bg-muted py-12 md:py-16 lg:py-20">
-          <div className="container">
+        <section className="relative py-12 md:py-16 lg:py-20 overflow-hidden bg-muted">
+          {/* Image de fond bien visible mais discrète */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src={defaultLearningImage} // Remplacez par votre image
+              alt="Arrière-plan formations"
+              className="w-full h-full object-cover object-center opacity-30" // Opacité à 30% pour une bonne visibilité
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-muted/70"></div>{" "}
+            {/* Dégradé pour améliorer la lisibilité */}
+          </div>
+
+          {/* Contenu */}
+          <div className="container relative z-10">
             <motion.div
               className="mx-auto max-w-[800px] text-center"
               initial={{ opacity: 0, y: 20 }}
@@ -125,7 +140,7 @@ export default function ContactPage() {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-foreground">
                 Contactez-nous
               </h1>
               <p className="mt-4 text-muted-foreground md:text-xl">
@@ -157,7 +172,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-medium">Adresse</h3>
                       <p className="text-muted-foreground">
-                        123 Avenue de la Formation, 75000 Paris
+                        Route Lafrane km 1, Sfax
                       </p>
                     </div>
                   </div>
@@ -165,7 +180,7 @@ export default function ContactPage() {
                     <Phone className="mr-3 h-5 w-5 text-primary" />
                     <div>
                       <h3 className="font-medium">Téléphone</h3>
-                      <p className="text-muted-foreground">+33 1 23 45 67 89</p>
+                      <p className="text-muted-foreground">+216 20 20 20 20</p>
                     </div>
                   </div>
                   <div className="flex items-start">
@@ -173,7 +188,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-medium">Email</h3>
                       <p className="text-muted-foreground">
-                        contact@techcert.fr
+                        contact@zetta-training.tn
                       </p>
                     </div>
                   </div>
@@ -181,13 +196,15 @@ export default function ContactPage() {
                 <CardFooter>
                   <div className="h-[400px] w-full overflow-hidden rounded-md bg-muted">
                     {/* Ici, vous pourriez intégrer une carte Google Maps */}
-                    <div className="flex h-full items-center justify-center">
-                      <img
-                        src={localisation}
-                        alt="Nos locaux"
-                        className="object-contain"
-                      />
-                    </div>
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d419622.171217443!2d10.747764!3d34.74808!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzTCsDQ0JzUzLjEiTiAxMMKwNDQnNTIuMCJF!5e0!3m2!1sfr!2sus!4v1743449748072!5m2!1sfr!2sus"
+                      width="600"
+                      height="450"
+                      style={{ border: 0 }}
+                      allowFullScreen={true}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
                   </div>
                 </CardFooter>
               </Card>

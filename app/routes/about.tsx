@@ -7,18 +7,33 @@ import { MainNav } from "~/components/main-nav";
 import team from "~/assets/team.png";
 import user from "~/assets/user.png";
 import locaux from "~/assets/locaux.png";
+import UpperNav from "~/components/upper-nav";
+import defaultLearningImage from "~/assets/Learning-bro.png";
 
 export default function AboutPage() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center">
+      <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <UpperNav />
+        <div className="container border-b">
           <MainNav />
         </div>
       </header>
       <main className="flex-1">
-        <section className="bg-muted py-12 md:py-16 lg:py-20">
-          <div className="container">
+        <section className="relative py-12 md:py-16 lg:py-20 overflow-hidden bg-muted">
+          {/* Image de fond bien visible mais discrète */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src={defaultLearningImage} // Remplacez par votre image
+              alt="Arrière-plan formations"
+              className="w-full h-full object-cover object-center opacity-30" // Opacité à 30% pour une bonne visibilité
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-muted/30 to-muted/70"></div>{" "}
+            {/* Dégradé pour améliorer la lisibilité */}
+          </div>
+
+          {/* Contenu */}
+          <div className="container relative z-10">
             <motion.div
               className="mx-auto max-w-[800px] text-center"
               initial={{ opacity: 0, y: 20 }}
@@ -26,11 +41,11 @@ export default function AboutPage() {
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-                À propos de TechCert
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-foreground">
+                À propos de Zetta
               </h1>
               <p className="mt-4 text-muted-foreground md:text-xl">
-                Centre d'excellence en formation technologique depuis 2010
+                Centre d'excellence en formation technologique depuis 2023
               </p>
             </motion.div>
           </div>
@@ -46,7 +61,7 @@ export default function AboutPage() {
             >
               <h2 className="text-3xl font-bold mb-6">Notre mission</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                Chez TechCert, notre mission est de former les professionnels de
+                Chez Zetta, notre mission est de former les professionnels de
                 l'informatique aux technologies les plus demandées sur le
                 marché, en leur offrant des formations de qualité et des
                 certifications reconnues internationalement.
@@ -319,7 +334,7 @@ export default function AboutPage() {
             >
               <h2 className="text-3xl font-bold mb-6">Nos locaux</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                Situés en plein cœur de Paris, nos locaux modernes offrent un
+                Situés à Route Lafrane Km 1, nos locaux modernes offrent un
                 environnement d'apprentissage optimal avec des salles de
                 formation équipées des dernières technologies.
               </p>

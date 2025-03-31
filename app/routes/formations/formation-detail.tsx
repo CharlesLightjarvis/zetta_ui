@@ -6,6 +6,7 @@ import {
   CheckCircle,
   Calendar,
   BookOpen,
+  Info,
 } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { MainNav } from "~/components/main-nav";
@@ -36,6 +37,8 @@ import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import api from "~/api";
 import echo from "../../echo";
+import defaultLearningImage from "~/assets/Learning-bro.png";
+import UpperNav from "~/components/upper-nav";
 
 // Données fictives pour les formations
 const getCourseTypeLabel = (courseType: string) => {
@@ -89,7 +92,7 @@ export default function FormationDetailPage() {
       formation_id: formation?.id, // Le slug de la formation
     };
     console.log("Données de préinscription:", data);
-    await api.post("/guest/interests", data);
+    await api.post("/admin/interests", data);
     setIsDialogOpen(false);
   };
 
@@ -118,8 +121,9 @@ export default function FormationDetailPage() {
   if (!formation) {
     return (
       <div className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-16 items-center">
+        <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <UpperNav />
+          <div className="container border-b">
             <MainNav />
           </div>
         </header>
@@ -141,8 +145,9 @@ export default function FormationDetailPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center">
+      <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <UpperNav />
+        <div className="container border-b">
           <MainNav />
         </div>
       </header>
@@ -150,7 +155,7 @@ export default function FormationDetailPage() {
         <div
           className="relative h-[300px] md:h-[400px] w-full"
           style={{
-            backgroundImage: `url(${formation.image})`,
+            backgroundImage: `url(${defaultLearningImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -187,11 +192,11 @@ export default function FormationDetailPage() {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="mb-8 grid w-full grid-cols-4 md:w-auto">
+            <TabsList className="mb-8 grid w-full grid-cols-3 md:w-auto">
               <TabsTrigger value="overview">Aperçu</TabsTrigger>
               <TabsTrigger value="program">Programme</TabsTrigger>
               <TabsTrigger value="certifications">Certifications</TabsTrigger>
-              <TabsTrigger value="testimonials">Témoignages</TabsTrigger>
+              {/* <TabsTrigger value="testimonials">Témoignages</TabsTrigger> */}
             </TabsList>
             <TabsContent value="overview" className="space-y-8">
               <div className="grid gap-8 md:grid-cols-3">
@@ -272,7 +277,7 @@ export default function FormationDetailPage() {
                           onOpenChange={setIsDialogOpen}
                         >
                           <DialogTrigger asChild>
-                            <Button className="w-full hover:cursor-pointer">
+                            <Button className="w-full hover:cursor-pointer  bg-orange-600 hover:bg-orange-700">
                               Faire une Préinscription
                             </Button>
                           </DialogTrigger>
@@ -317,7 +322,10 @@ export default function FormationDetailPage() {
                                   placeholder="Précisez vos attentes, questions ou besoins spécifiques..."
                                 />
                               </div>
-                              <Button type="submit" className="w-full">
+                              <Button
+                                type="submit"
+                                className="w-full  bg-orange-600 hover:bg-orange-700"
+                              >
                                 Envoyer la préinscription
                               </Button>
                             </form>
@@ -390,27 +398,51 @@ export default function FormationDetailPage() {
             </TabsContent>
 
             <TabsContent value="program" className="space-y-8">
-              <h2 className="text-2xl font-bold mb-6">
+              <h2 className="text-3xl font-bold mb-6 text-primary">
                 Programme de la formation
               </h2>
-              <Accordion type="single" collapsible className="w-full">
+              <Accordion
+                type="single"
+                collapsible
+                className="w-full shadow-sm border rounded-lg overflow-hidden"
+              >
                 {formation.modules.map((module, index) => (
-                  <AccordionItem key={index} value={`module-${index}`}>
-                    <AccordionTrigger className="text-lg font-medium cursor-pointer">
-                      Module {index + 1}: {module.name}
+                  <AccordionItem
+                    key={index}
+                    value={`module-${index}`}
+                    className="border-b last:border-b-0"
+                  >
+                    <AccordionTrigger className="text-lg font-medium cursor-pointer hover:bg-muted/30 px-4 py-3">
+                      <div className="flex items-center">
+                        <span className="text-muted-foreground mr-3">
+                          Module:
+                        </span>
+                        <span className="bg-primary/10 text-primary font-bold w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                          {index + 1}
+                        </span>
+                        {module.name}
+                      </div>
                     </AccordionTrigger>
-                    <AccordionContent className="space-y-4">
-                      <p className="text-muted-foreground">
+                    <AccordionContent className="space-y-4 bg-muted/5 p-4">
+                      <p className="text-muted-foreground border-l-4 border-primary/50 pl-3 py-2 italic bg-muted/20 rounded-r">
                         {module.description}
                       </p>
                       <div>
-                        <h4 className="font-medium mb-2 flex items-center">
+                        <h4 className="font-medium mb-4 flex items-center text-primary bg-primary/5 p-2 rounded-md">
                           <BookOpen className="mr-2 h-5 w-5 text-primary" />
                           Contenu du module
                         </h4>
-                        <ul className="space-y-2 pl-7 list-disc">
+                        <ul className="space-y-3 pl-0">
                           {module.lessons.map((lesson, lessonIndex) => (
-                            <li key={lessonIndex}>{lesson.name}</li>
+                            <li
+                              key={lessonIndex}
+                              className="pl-4 border-l-2 border-primary/30 hover:border-primary hover:text-primary transition-all flex items-center"
+                            >
+                              <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded mr-2">
+                                {lessonIndex + 1}
+                              </span>
+                              <span>{lesson.name}</span>
+                            </li>
                           ))}
                         </ul>
                       </div>
@@ -421,28 +453,50 @@ export default function FormationDetailPage() {
             </TabsContent>
 
             <TabsContent value="certifications" className="space-y-8">
-              <h2 className="text-2xl font-bold mb-6">Certifications</h2>
-              <div className="grid gap-6 md:grid-cols-2">
+              <h2 className="text-3xl font-bold mb-6 text-primary">
+                Certifications
+              </h2>
+              <div className="grid gap-8 md:grid-cols-2">
                 {formation.certifications.map((certification, index) => (
-                  <Card key={index}>
-                    <CardContent className="p-6 flex items-start space-x-4">
-                      <Award className="h-12 w-12 text-primary" />
-                      <div>
-                        <h3 className="text-xl font-medium mb-2">
-                          {certification.name}
-                        </h3>
-                        <p className="text-muted-foreground">
+                  <Card
+                    key={index}
+                    className="overflow-hidden border-2 hover:border-primary/50 transition-all hover:shadow-md"
+                  >
+                    <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-3 border-b">
+                      <h3 className="text-xl font-semibold text-primary">
+                        {certification.name}
+                      </h3>
+                    </div>
+                    <CardContent className="p-6 flex flex-col md:flex-row gap-6">
+                      <div className="flex-shrink-0">
+                        <img
+                          src={defaultLearningImage}
+                          alt={`Certification ${certification.name}`}
+                          className="w-24 h-24 object-contain rounded-md border p-1"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-muted-foreground mb-4">
                           Cette certification reconnue internationalement valide
                           vos compétences en {formation.category.name} et
                           augmente votre valeur sur le marché du travail.
                         </p>
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <CheckCircle className="h-4 w-4 mr-2 text-primary" />
+                          <span>Reconnue internationalement</span>
+                        </div>
                       </div>
                     </CardContent>
+                    <div className="px-6 pb-6 pt-2 flex justify-end">
+                      <button className="text-sm px-4 py-2 bg-primary/10 hover:bg-primary hover:text-white rounded-md transition-colors flex items-center">
+                        <Info className="h-4 w-4 mr-2" />
+                        En savoir plus
+                      </button>
+                    </div>
                   </Card>
                 ))}
               </div>
             </TabsContent>
-
             {/* <TabsContent value="testimonials" className="space-y-8">
               <h2 className="text-2xl font-bold mb-6">
                 Témoignages d'anciens étudiants
@@ -477,7 +531,7 @@ export default function FormationDetailPage() {
           </Tabs>
         </section>
 
-        <section className="bg-muted py-12">
+        {/* <section className="bg-muted py-12">
           <div className="container text-center">
             <h2 className="text-2xl font-bold mb-4">
               Prêt à développer vos compétences ?
@@ -490,7 +544,7 @@ export default function FormationDetailPage() {
               <Link to="/contact#interest-form">Exprimer mon intérêt</Link>
             </Button>
           </div>
-        </section>
+        </section> */}
       </main>
       <Footer />
     </div>

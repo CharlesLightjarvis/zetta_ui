@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import zetta from "../assets/zetta-logo.png";
 
 export function Footer() {
   return (
@@ -18,7 +19,7 @@ export function Footer() {
       <div className="container py-12 md:py-16">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="mb-4 text-lg font-bold">TechCert</h3>
+            <img src={zetta} alt="zetta logo" className="h-[40px] mb-2" />
             <p className="text-muted-foreground">
               Centre de formation spécialisé dans les certifications
               technologiques pour les professionnels de l'IT.
@@ -93,17 +94,17 @@ export function Footer() {
               <li className="flex items-start">
                 <MapPin className="mr-2 h-5 w-5 text-primary" />
                 <span className="text-muted-foreground">
-                  123 Avenue de la Formation, 75000 Paris
+                  Route Lafrane km 1, Sfax
                 </span>
               </li>
               <li className="flex items-start">
                 <Phone className="mr-2 h-5 w-5 text-primary" />
-                <span className="text-muted-foreground">+33 1 23 45 67 89</span>
+                <span className="text-muted-foreground">+216 22 008 997</span>
               </li>
               <li className="flex items-start">
                 <Mail className="mr-2 h-5 w-5 text-primary" />
                 <span className="text-muted-foreground">
-                  contact@techcert.fr
+                  contact@zetta-training.tn
                 </span>
               </li>
             </ul>
@@ -123,7 +124,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} TechCert. Tous droits réservés.</p>
+          <p>© {new Date().getFullYear()} Zetta. Tous droits réservés.</p>
           <div className="mt-2 space-x-4">
             <Link to="/mentions-legales" className="hover:text-primary">
               Mentions légales
