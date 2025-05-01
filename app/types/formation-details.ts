@@ -18,6 +18,7 @@ interface Category {
 
 interface Certification {
   id: string;
+  image?: string;
   name: string;
   slug: string;
   description?: string;
@@ -28,6 +29,7 @@ interface Certification {
 interface Lesson {
   id: string;
   name: string;
+  description?: string;
 }
 
 interface Module {
@@ -56,6 +58,7 @@ export interface FormationDetails {
   level: "beginner" | "intermediate" | "advanced";
   duration: number; // en semaines
   price: number;
+  discount_price?: number;
   teacher: Teacher;
   category: Category;
   sessions: Session[];

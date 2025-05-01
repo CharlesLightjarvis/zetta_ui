@@ -42,6 +42,7 @@ export interface Formation {
   level: "beginner" | "intermediate" | "advanced";
   duration: number; // en semaines
   price: number;
+  discount_price?: number;
   teacher: Teacher;
   category: Category;
   sessions: Session[];

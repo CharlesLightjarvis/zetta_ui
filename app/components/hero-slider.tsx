@@ -80,7 +80,7 @@ export function HeroSlider() {
           style={{
             backgroundImage: `url(${slides[current].image})`,
             backgroundSize: "contain",
-            backgroundColor: "#0E1113",
+            backgroundColor: "#fafafa",
             backgroundPosition: "center",
           }}
         >

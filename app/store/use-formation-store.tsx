@@ -44,6 +44,7 @@ const useFormationStore = create<FormationStore>((set) => ({
 
       const formationDetails = response.data.formation; // Changed from formations to formation
       set({ formationDetails, loading: false, error: null });
+      console.log(formationDetails);
     } catch (error: any) {
       set({
         error: error.message,

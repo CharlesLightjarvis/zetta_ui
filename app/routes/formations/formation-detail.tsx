@@ -61,6 +61,7 @@ const getLevelLabel = (level: string) => {
 export default function FormationDetailPage() {
   const { slug } = useParams();
   const [activeTab, setActiveTab] = useState("overview");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { formationDetails, fetchFormationDetails, loading, error } =
     useFormationStore();
@@ -83,17 +84,26 @@ export default function FormationDetailPage() {
 
   const handlePreregistration = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     const formData = new FormData(e.currentTarget);
     const data = {
       fullName: formData.get("fullName"),
       email: formData.get("email"),
       phone: formData.get("phone"),
       message: formData.get("message"),
-      formation_id: formation?.id, // Le slug de la formation
+      formation_id: formation?.id,
     };
-    console.log("Données de préinscription:", data);
-    await api.post("/admin/interests", data);
-    setIsDialogOpen(false);
+
+    try {
+      console.log("Données de préinscription:", data);
+      await api.post("/admin/interests", data);
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error("Erreur lors de la préinscription:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -155,8 +165,8 @@ export default function FormationDetailPage() {
         <div
           className="relative h-[300px] md:h-[400px] w-full"
           style={{
-            backgroundImage: `url(${defaultLearningImage})`,
-            backgroundSize: "cover",
+            backgroundImage: `url(${formation.image || defaultLearningImage})`,
+            backgroundSize: "contain",
             backgroundPosition: "center",
           }}
         >
@@ -169,19 +179,19 @@ export default function FormationDetailPage() {
             <div className="mt-4 flex flex-wrap gap-4">
               <div className="flex items-center">
                 <Clock className="mr-2 h-5 w-5" />
-                <span>{formation.duration} semaines</span>
+                <span>{formation.duration} heures</span>
               </div>
               <div className="flex items-center">
                 <Award className="mr-2 h-5 w-5" />
                 <span>{getLevelLabel(formation.level)}</span>
               </div>
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <Users className="mr-2 h-5 w-5" />
                 <span>
                   {getTotalEnrolledStudents(formation.sessions)} étudiants
                   inscrits
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -264,12 +274,25 @@ export default function FormationDetailPage() {
                   <Card>
                     <CardContent className="p-6">
                       <div className="space-y-4">
-                        <div className="text-center">
-                          <span className="text-3xl font-bold">
-                            {formation.price} DT
-                          </span>
-                          <p className="text-muted-foreground">TVA incluse</p>
+                        <div className="flex items-center justify-center gap-3 mb-2">
+                          {formation.discount_price ? (
+                            <>
+                              <span className="text-3xl font-bold text-orange-600">
+                                {formation.price} DT
+                              </span>
+                              <span className="text-xl text-gray-500 line-through">
+                                {formation.discount_price} DT
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-3xl font-bold text-orange-600">
+                              {formation.price} DT
+                            </span>
+                          )}
                         </div>
+                        <p className="text-muted-foreground text-center">
+                          TVA incluse
+                        </p>
 
                         {/* // dialog submission */}
                         <Dialog
@@ -324,9 +347,17 @@ export default function FormationDetailPage() {
                               </div>
                               <Button
                                 type="submit"
-                                className="w-full  bg-orange-600 hover:bg-orange-700"
+                                className="w-full bg-orange-600 hover:bg-orange-700"
+                                disabled={isSubmitting}
                               >
-                                Envoyer la préinscription
+                                {isSubmitting ? (
+                                  <>
+                                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                                    Envoi en cours...
+                                  </>
+                                ) : (
+                                  "Envoyer la préinscription"
+                                )}
                               </Button>
                             </form>
                           </DialogContent>
@@ -353,7 +384,7 @@ export default function FormationDetailPage() {
                           </div>
                         </div>
 
-                        <div className="pt-4 border-t">
+                        {/* <div className="pt-4 border-t">
                           <h3 className="font-medium mb-2 flex items-center">
                             <Calendar className="mr-2 h-5 w-5 text-primary" />
                             Sessions suivantes
@@ -370,25 +401,33 @@ export default function FormationDetailPage() {
                                 </li>
                               ))}
                           </ul>
-                        </div>
+                        </div> */}
 
                         <div className="pt-4 border-t">
                           <h3 className="font-medium mb-2 flex items-center">
                             <Award className="mr-2 h-5 w-5 text-primary" />
                             Certifications incluses
                           </h3>
-                          <ul className="space-y-2">
-                            {formation.certifications.map(
-                              (certification, index) => (
-                                <li
-                                  key={index}
-                                  className="text-muted-foreground"
-                                >
-                                  {certification.name}
-                                </li>
-                              )
-                            )}
-                          </ul>
+                          {formation.certifications &&
+                          formation.certifications.length > 0 ? (
+                            <ul className="space-y-2">
+                              {formation.certifications.map(
+                                (certification, index) => (
+                                  <li
+                                    key={index}
+                                    className="text-muted-foreground"
+                                  >
+                                    {certification.name}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          ) : (
+                            <p className="text-muted-foreground italic">
+                              Aucune certification disponible pour cette
+                              formation
+                            </p>
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -432,16 +471,25 @@ export default function FormationDetailPage() {
                           <BookOpen className="mr-2 h-5 w-5 text-primary" />
                           Contenu du module
                         </h4>
-                        <ul className="space-y-3 pl-0">
+                        <ul className="space-y-4 pl-0">
                           {module.lessons.map((lesson, lessonIndex) => (
                             <li
                               key={lessonIndex}
-                              className="pl-4 border-l-2 border-primary/30 hover:border-primary hover:text-primary transition-all flex items-center"
+                              className="pl-4 border-l-2 border-primary/30 hover:border-primary transition-all"
                             >
-                              <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded mr-2">
-                                {lessonIndex + 1}
-                              </span>
-                              <span>{lesson.name}</span>
+                              <div className="flex items-center mb-1">
+                                <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded mr-2 flex-shrink-0">
+                                  {lessonIndex + 1}
+                                </span>
+                                <span className="font-medium hover:text-primary">
+                                  {lesson.name}
+                                </span>
+                              </div>
+                              {lesson.description && (
+                                <p className="text-sm text-muted-foreground ml-7">
+                                  {lesson.description}
+                                </p>
+                              )}
                             </li>
                           ))}
                         </ul>
@@ -457,44 +505,61 @@ export default function FormationDetailPage() {
                 Certifications
               </h2>
               <div className="grid gap-8 md:grid-cols-2">
-                {formation.certifications.map((certification, index) => (
-                  <Card
-                    key={index}
-                    className="overflow-hidden border-2 hover:border-primary/50 transition-all hover:shadow-md"
-                  >
-                    <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-3 border-b">
-                      <h3 className="text-xl font-semibold text-primary">
-                        {certification.name}
-                      </h3>
-                    </div>
-                    <CardContent className="p-6 flex flex-col md:flex-row gap-6">
-                      <div className="flex-shrink-0">
-                        <img
-                          src={defaultLearningImage}
-                          alt={`Certification ${certification.name}`}
-                          className="w-24 h-24 object-contain rounded-md border p-1"
-                        />
+                {formation.certifications &&
+                formation.certifications.length > 0 ? (
+                  formation.certifications.map((certification, index) => (
+                    <Card
+                      key={index}
+                      className="overflow-hidden border-2 hover:border-primary/50 transition-all hover:shadow-md"
+                    >
+                      <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-3 border-b">
+                        <h3 className="text-xl font-semibold text-primary">
+                          {certification.name}
+                        </h3>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-muted-foreground mb-4">
-                          Cette certification reconnue internationalement valide
-                          vos compétences en {formation.category.name} et
-                          augmente votre valeur sur le marché du travail.
-                        </p>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <CheckCircle className="h-4 w-4 mr-2 text-primary" />
-                          <span>Reconnue internationalement</span>
+                      <CardContent className="p-6 flex flex-col md:flex-row gap-6">
+                        <div className="flex-shrink-0">
+                          <img
+                            src={certification.image ?? defaultLearningImage}
+                            alt={`Certification ${certification.name}`}
+                            className="w-24 h-24 object-contain rounded-md border p-1"
+                          />
                         </div>
+                        <div className="flex-1">
+                          <p className="text-muted-foreground mb-4">
+                            Cette certification reconnue internationalement
+                            valide vos compétences en {formation.category.name}{" "}
+                            et augmente votre valeur sur le marché du travail.
+                          </p>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <CheckCircle className="h-4 w-4 mr-2 text-primary" />
+                            <span>Reconnue internationalement</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                      <div className="px-6 pb-6 pt-2 flex justify-end">
+                        <button className="text-sm px-4 py-2 bg-primary/10 hover:bg-primary hover:text-white rounded-md transition-colors flex items-center">
+                          <Info className="h-4 w-4 mr-2" />
+                          En savoir plus
+                        </button>
                       </div>
-                    </CardContent>
-                    <div className="px-6 pb-6 pt-2 flex justify-end">
-                      <button className="text-sm px-4 py-2 bg-primary/10 hover:bg-primary hover:text-white rounded-md transition-colors flex items-center">
-                        <Info className="h-4 w-4 mr-2" />
-                        En savoir plus
-                      </button>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="col-span-2 flex flex-col items-center justify-center p-12 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-full shadow-sm mb-6">
+                      <Award className="h-12 w-12 text-orange-500" />
                     </div>
-                  </Card>
-                ))}
+                    <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
+                      Aucune certification disponible
+                    </h3>
+                    <p className="text-center text-gray-600 dark:text-gray-400 max-w-md">
+                      Cette formation se concentre sur l'acquisition de
+                      compétences pratiques sans certification associée pour le
+                      moment.
+                    </p>
+                  </div>
+                )}
               </div>
             </TabsContent>
             {/* <TabsContent value="testimonials" className="space-y-8">
